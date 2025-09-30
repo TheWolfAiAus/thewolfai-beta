@@ -17,6 +17,12 @@ The Wolf AI is a Next.js application designed to provide a sleek and interactive
     *   Paw print images (`/pawprint.png`) that fade out at the cursor's previous locations.
 *   **Interactivity:**
     *   "Sign In" and "Dashboard" buttons with hover effects.
+*   **Performance:**
+    *   Images are optimized using the Next.js `<Image>` component for faster loading times.
+*   **SEO:**
+    *   The page has a descriptive title and meta description to improve search engine visibility.
+*   **Accessibility:**
+    *   Decorative elements (cursor and paw prints) are hidden from screen readers to avoid confusion.
 
 ### Backend and Services
 
