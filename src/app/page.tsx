@@ -1,23 +1,12 @@
 "use client";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 
 export default function Home() {
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-  const [prints, setPrints] = useState<{ id: number, x: number, y: number }[]>([]);
   const [messages, setMessages] = useState<{ role: string, content: string }[]>([]);
   const [input, setInput] = useState("");
   const [model, setModel] = useState("gemini");
-
-  useEffect(() => {
-    const handleMove = (e: MouseEvent) => {
-      setCursorPos({ x: e.clientX, y: e.clientY });
-      setPrints((prev) => [...prev, { id: Date.now(), x: e.clientX, y: e.clientY }].slice(-10));
-    };
-    window.addEventListener("mousemove", handleMove);
-    return () => window.removeEventListener("mousemove", handleMove);
-  }, []);
 
   const handleSend = async () => {
     if (!input) return;
@@ -36,24 +25,35 @@ export default function Home() {
   };
 
   return (
-    <div className="relative h-screen w-screen bg-black flex flex-col items-center justify-center overflow-hidden">
+    <main className="bg-gray-900 text-white min-h-screen flex flex-col lg:flex-row">
+      <div className="lg:w-1/2 p-8 flex flex-col justify-center items-center bg-gray-800">
         <Image
           src="/TheWolf.webp"
           alt="Wolf AI"
           width={384}
           height={384}
           className="object-contain"
+          priority
         />
-      <motion.h1
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-        className="text-6xl font-bold bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-400 text-transparent bg-clip-text"
-      >
-        THE WOLF AI
-      </motion.h1>
-      <div className="w-full max-w-2xl mx-auto mt-8">
-        <div className="bg-gray-800 rounded-lg shadow-lg p-4">
+        <motion.h1
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="text-5xl font-bold bg-gradient-to-r from-cyan-400 via-pink-500 to-yellow-400 text-transparent bg-clip-text mt-4"
+        >
+          THE WOLF AI
+        </motion.h1>
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="text-lg mt-4 text-center text-gray-300"
+        >
+          Your intelligent companion, ready to assist you with a wide range of tasks. Explore the future of AI today.
+        </motion.p>
+      </div>
+      <div className="lg:w-1/2 p-8 flex flex-col">
+        <div className="bg-gray-800 rounded-lg shadow-lg p-4 flex-grow flex flex-col">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-white">Chat</h2>
             <select
@@ -65,7 +65,7 @@ export default function Home() {
               <option value="wolf">OpenAI</option>
             </select>
           </div>
-          <div className="h-64 overflow-y-auto mb-4">
+          <div className="flex-grow overflow-y-auto mb-4 p-2 bg-gray-900 rounded-md">
             {messages.map((msg, index) => (
               <div
                 key={index}
@@ -74,9 +74,9 @@ export default function Home() {
                 } mb-2`}
               >
                 <div
-                  className={`rounded-lg px-4 py-2 ${
+                  className={`rounded-lg px-4 py-2 max-w-xs lg:max-w-md ${
                     msg.role === "user"
-                      ? "bg-blue-500 text-white"
+                      ? "bg-blue-600 text-white"
                       : "bg-gray-700 text-white"
                   }`}
                 >
@@ -85,42 +85,24 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <div className="flex">
+          <div className="flex mt-auto">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              className="flex-grow bg-gray-700 text-white rounded-l-md px-4 py-2 focus:outline-none"
+              className="flex-grow bg-gray-700 text-white rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Type your message..."
             />
             <button
               onClick={handleSend}
-              className="bg-blue-500 text-white rounded-r-md px-4 py-2"
+              className="bg-blue-600 text-white rounded-r-md px-4 py-2 hover:bg-blue-700 transition-colors duration-300"
             >
               Send
             </button>
           </div>
         </div>
       </div>
-      <div aria-hidden="true">
-        {prints.map((p) => (
-          <motion.div
-            key={p.id}
-            initial={{ opacity: 0.8, scale: 1 }}
-            animate={{ opacity: 0, scale: 0 }}
-            transition={{ duration: 1.5 }}
-            className="absolute w-6 h-6"
-            style={{ left: p.x, top: p.y }}
-          >
-            <Image src="/pawprint.png" alt="" width={24} height={24} />
-          </motion.div>
-        ))}
-        <div
-          className="pointer-events-none fixed w-12 h-12 rounded-full bg-cyan-400/40 blur-xl"
-          style={{ left: cursorPos.x - 24, top: cursorPos.y - 24 }}
-        />
-      </div>
-    </div>
+    </main>
   );
 }
