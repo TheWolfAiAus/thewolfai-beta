@@ -2,14 +2,33 @@ import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function POST(req: Request) {
-  const { message } = await req.json();
+  try {
+    const { message } = await req.json();
+    console.log("Received message:", message);
 
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      console.error("GEMINI_API_KEY is not set.");
+      return NextResponse.json(
+        { error: "Server configuration error: API key not found." },
+        { status: 500 }
+      );
+    }
+    console.log("Using API Key.");
 
-  const result = await model.generateContent(message);
-  const response = await result.response;
-  const text = response.text();
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-  return NextResponse.json({ reply: text });
+    const result = await model.generateContent(message);
+    const response = await result.response;
+    const text = response.text();
+
+    return NextResponse.json({ reply: text });
+  } catch (error) {
+    console.error("Error in Gemini API route:", error);
+    return NextResponse.json(
+      { error: "An error occurred while processing your request." },
+      { status: 500 }
+    );
+  }
 }
