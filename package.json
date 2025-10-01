@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "firebase login:ci --non-interactive --token \"$FIREBASE_TOKEN\""
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
